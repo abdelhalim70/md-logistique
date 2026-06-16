@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html, body, #root {
+  min-height: 100%;
+}
+
+body {
+  @apply bg-slate-50 text-slate-900 antialiased;
+  font-family: 'Poppins', Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+button {
+  @apply transition duration-200 ease-in-out;
+}
+
+input, select, textarea {
+  @apply appearance-none outline-none;
+}
+
+/* Premium branding */
+
+:root {
+  --md-primary: #ff5b00;
+  --md-primary-dark: #d94b00;
+  --md-gold: #ffd400;
+  --md-bg: #fbfbfd;
+  --md-muted: #6b7280;
+}
+
+.brand-gradient {
+  background-image: linear-gradient(135deg,var(--md-primary), var(--md-gold));
+}
+
+.btn-md {
+  @apply inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold text-white shadow-premium;
+  background-image: linear-gradient(90deg,var(--md-primary), var(--md-primary-dark));
+}
+
+.card-premium {
+  @apply rounded-4xl border border-slate-100 bg-white p-6 shadow-premium;
+}
+
+.muted {
+  color: var(--md-muted);
+}
+
+@layer utilities {
+  .shadow-premium {
+    box-shadow: 0 10px 30px rgba(16, 24, 40, 0.12), inset 0 1px 0 rgba(255,255,255,0.02);
+  }
+}
