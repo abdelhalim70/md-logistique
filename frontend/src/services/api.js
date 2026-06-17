@@ -1,14 +1,19 @@
 import axios from 'axios';
 
-const apiClient = axios.create({
+const api = axios.create({
   baseURL: 'http://localhost:4000/api',
-  timeout: 15000,
 });
 
 export function uploadWebfleet(formData) {
-  return apiClient.post('/upload-webfleet', formData, {
+  return api.post('/upload-webfleet', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
   });
 }
+
+export function getAlexDashboard() {
+  return api.get('/alex/dashboard');
+}
+
+export default api;

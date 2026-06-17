@@ -18,6 +18,25 @@ async function uploadWebfleet(req, res) {
       create: { fullName: result.driverName },
     });
 
+    const existingImport = await prisma.webfleetImport.findFirst({
+      where: {
+        fileName: originalName,
+        driverId: driver.id,
+      },
+      include: {
+        driver: true,
+        summary: true,
+      },
+    });
+
+    if (existingImport) {
+      return res.json({
+        message: "Ce fichier a déjà été importé",
+        duplicate: true,
+        saved: existingImport,
+      });
+    }
+
     const webfleetImport = await prisma.webfleetImport.create({
       data: {
         fileName: originalName,
