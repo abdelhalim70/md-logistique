@@ -13,17 +13,20 @@ export default function Header() {
   const title = titleMap[location.pathname] || 'MD Logistique';
 
   return (
-    <header className="flex flex-col gap-5 border-b border-slate-100 bg-white px-6 py-6 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-      <div>
-        <h1 className="text-2xl font-semibold text-mdgray">{title}</h1>
-        <p className="mt-1 text-sm muted">Gestion interne et suivi des chauffeurs MD Logistique.</p>
-      </div>
-
-      <div className="flex items-center gap-4 rounded-2xl bg-slate-50 px-4 py-2 text-sm text-slate-700">
-        <div className="h-10 w-10 shrink-0 rounded-full brand-gradient text-center leading-10 text-white flex items-center justify-center font-semibold">A</div>
+    <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 px-4 py-4 shadow-sm backdrop-blur-sm transition sm:px-6 lg:px-8">
+      <div className="mx-auto flex max-w-7xl flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <div className="font-semibold text-slate-900">Alex</div>
-          <div className="text-sm muted">Administrateur</div>
+          <p className="text-xs uppercase tracking-[0.28em] text-slate-500">MD Logistique</p>
+          <h1 className="mt-2 text-xl font-semibold text-slate-900 sm:text-2xl">{title}</h1>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">Pilotage des flux, des chauffeurs et des rapports Webfleet depuis une interface premium.</p>
+        </div>
+
+        <div className="flex items-center gap-3 rounded-3xl bg-slate-50 px-4 py-3 text-sm text-slate-700 shadow-sm">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 to-orange-400 text-white font-semibold">A</div>
+          <div>
+            <div className="font-semibold text-slate-900">Alex</div>
+            <div className="text-xs uppercase tracking-[0.22em] text-slate-500">Administrateur</div>
+          </div>
         </div>
       </div>
     </header>

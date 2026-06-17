@@ -1,9 +1,18 @@
 import { useMemo, useState } from 'react';
 import { read, utils } from 'xlsx';
-import UploadZone from '../components/UploadZone';
+import UploadDropzone from '../components/UploadDropzone';
+import PageHeader from '../components/PageHeader';
+import PremiumCard from '../components/PremiumCard';
+import DataTable from '../components/DataTable';
+import EmptyState from '../components/EmptyState';
 import { uploadWebfleet } from '../services/api';
 
 const previewHeaders = ['Conduite', 'Travail', 'Repos', 'Disponibilité', 'Heure de début', 'Heure de fin'];
+
+const previewColumns = previewHeaders.map((header) => ({
+  header,
+  accessor: (row) => row[header] ?? row[header.toLowerCase()] ?? '',
+}));
 
 export default function WebfleetImport() {
   const [file, setFile] = useState(null);
@@ -11,38 +20,6 @@ export default function WebfleetImport() {
   const [previewRows, setPreviewRows] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
-  const previewTable = useMemo(() => {
-    if (!previewRows.length) {
-      return null;
-    }
-    return (
-      <div className="overflow-x-auto rounded-[32px] border border-slate-200 bg-white p-4 shadow-soft">
-        <table className="min-w-full table-auto text-left text-sm text-slate-700">
-          <thead>
-            <tr>
-              {previewHeaders.map((header) => (
-                <th key={header} className="border-b border-slate-200 px-4 py-3 font-medium text-slate-500">
-                  {header}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {previewRows.map((row, index) => (
-              <tr key={index} className="odd:bg-slate-50">
-                {previewHeaders.map((header) => (
-                  <td key={header} className="border-b border-slate-200 px-4 py-3">
-                    {row[header] ?? row[header.toLowerCase()] ?? ''}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    );
-  }, [previewRows]);
 
   const loadPreview = async (selectedFile) => {
     if (!selectedFile) {
@@ -80,9 +57,11 @@ export default function WebfleetImport() {
     if (!file) {
       return;
     }
+
     setLoading(true);
     setError(null);
     setResult(null);
+
     try {
       const formData = new FormData();
       formData.append('file', file);
@@ -97,51 +76,52 @@ export default function WebfleetImport() {
 
   return (
     <div className="space-y-8">
-      <UploadZone file={file} onSelectFile={handleSelectFile} onUpload={handleUpload} loading={loading} />
+      <PageHeader
+        title="Import Webfleet"
+        description="Chargez votre rapport Excel puis consultez les totaux de conduite, travail et repos calculés automatiquement."
+        badge="Import"
+      />
+
+      <UploadDropzone file={file} onSelectFile={handleSelectFile} onUpload={handleUpload} loading={loading} />
 
       {error ? (
         <div className="rounded-[32px] border border-red-200 bg-red-50 p-5 text-sm text-red-700">{error}</div>
       ) : null}
 
       {result ? (
-        <section className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-soft">
-          <h2 className="text-xl font-semibold text-slate-900">Résultat de l'import</h2>
-          <p className="mt-2 text-sm text-slate-500">Totaux calculés par le backend.</p>
+        <PremiumCard
+          title="Résultat de l'import"
+          description="Synthèse claire et professionnelle des totaux calculés par le backend."
+        >
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {[
-              { label: 'Conduite', value: result.totals?.conduiteHeures ?? '-'},
-              { label: 'Travail', value: result.totals?.travailHeures ?? '-'},
-              { label: 'Heures travaillées', value: result.totals?.heuresTravaillees ?? '-'},
-              { label: 'Repos', value: result.totals?.reposHeures ?? '-'},
-              { label: 'Disponibilité', value: result.totals?.disponibiliteHeures ?? '-'},
-              { label: 'Total', value: result.totals?.totalHeures ?? '-'},
+              { label: 'Conduite', value: result.totals?.conduiteHeures ?? '-' },
+              { label: 'Travail', value: result.totals?.travailHeures ?? '-' },
+              { label: 'Heures travaillées', value: result.totals?.heuresTravaillees ?? '-' },
+              { label: 'Repos', value: result.totals?.reposHeures ?? '-' },
+              { label: 'Disponibilité', value: result.totals?.disponibiliteHeures ?? '-' },
+              { label: 'Total', value: result.totals?.totalHeures ?? '-' },
             ].map((item) => (
-              <div key={item.label} className="rounded-3xl bg-slate-50 p-5">
-                <p className="text-sm uppercase tracking-[0.24em] text-slate-500">{item.label}</p>
-                <p className="mt-3 text-2xl font-semibold text-slate-900">{item.value}</p>
+              <div key={item.label} className="rounded-[28px] border border-slate-200 bg-slate-50 p-5 transition hover:border-orange-200">
+                <p className="text-xs uppercase tracking-[0.24em] text-slate-500">{item.label}</p>
+                <p className="mt-3 text-3xl font-semibold text-slate-900">{item.value}</p>
               </div>
             ))}
           </div>
-        </section>
+        </PremiumCard>
       ) : null}
 
-      <section className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-soft">
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <p className="text-sm uppercase tracking-[0.24em] text-slate-500">Aperçu du fichier</p>
-            <h2 className="text-xl font-semibold text-slate-900">Premières lignes</h2>
-          </div>
-          <span className="rounded-full bg-orange-100 px-3 py-2 text-sm font-semibold text-mdorange">5 lignes</span>
-        </div>
-
-        <div className="mt-6">
-          {previewTable ?? (
-            <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-10 text-center text-slate-500">
-              Sélectionnez un fichier pour afficher les premières lignes.
-            </div>
-          )}
-        </div>
-      </section>
+      <PremiumCard title="Aperçu du fichier" description="Affichez un extrait des premières lignes de votre rapport importé.">
+        {previewRows.length ? (
+          <DataTable columns={previewColumns} data={previewRows} rowKey={(row, index) => index} />
+        ) : (
+          <EmptyState
+            title="Aucun aperçu disponible"
+            description="Sélectionnez un fichier Webfleet pour voir ses premières lignes ici." 
+            icon="📄"
+          />
+        )}
+      </PremiumCard>
     </div>
   );
 }
